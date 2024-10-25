@@ -4,8 +4,10 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -15,6 +17,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.pr03_business_cards_jaumegandara_albertgarrido.ui.theme.Pr03businesscardsjaumegandaraalbertgarridoTheme
@@ -41,7 +45,10 @@ fun MainLayout(modifier: Modifier = Modifier) {
         if (showForm) {
             Form()
         } else {
-            BusinessCard()
+            BusinessCard(
+                modifier = modifier.padding(16.dp),
+                backgroundImage = 1
+            )
             Button(
                 onClick = { showForm = true },
                 modifier = Modifier
@@ -51,7 +58,6 @@ fun MainLayout(modifier: Modifier = Modifier) {
                 Text("Botó")
             }
         }
-
     }
 }
 
@@ -65,12 +71,35 @@ fun Form(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun BusinessCard(modifier: Modifier = Modifier) {
-    Box(
-        modifier = Modifier
+fun BusinessCard(
+    modifier: Modifier = Modifier,
+    backgroundImage: Int
+) {
+    Card(
+        modifier = modifier
     ) {
-        Text("CardList")
+        Box{
+            Image(
+                painter = painterResource(id = getBackgroundImage(backgroundImage)),
+                contentDescription = null,
+            )
+
+            Column(
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .padding(16.dp)
+            ) {
+                Text("Bart Simpson")
+                Text("Android Developer")
+                Text("Desenvolupador d'Android amb 5 anys d'experiència a els més grans multinacionals.")
+            }
+        }
     }
+}
+
+@Composable
+fun getBackgroundImage(index: Int): Int {
+    return R.drawable.image_1
 }
 
 @Preview(showBackground = true)
