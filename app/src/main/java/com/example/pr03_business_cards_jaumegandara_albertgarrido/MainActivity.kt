@@ -9,6 +9,10 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -31,27 +35,23 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MainLayout(modifier: Modifier = Modifier) {
+    var showForm by remember { mutableStateOf(false) }
+
     Box(modifier = modifier.fillMaxSize()) {
-        // Aquí pots afegir les dues columnes de contingut si ho necessites
-        Column(
-            modifier = Modifier
-                .fillMaxHeight()
-                .padding(start = 16.dp)
-        ) {
+        if (showForm) {
             Form()
-            Spacer(modifier = Modifier.height(8.dp))
-            CardList()
+        } else {
+            BusinessCard()
+            Button(
+                onClick = { showForm = true },
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(16.dp)
+            ) {
+                Text("Botó")
+            }
         }
 
-        // Botó fixat a la part inferior dreta
-        Button(
-            onClick = { /* Acció del botó */ },
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(16.dp) // Marges des del fons i la dreta
-        ) {
-            Text("Botó")
-        }
     }
 }
 
@@ -65,8 +65,8 @@ fun Form(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun CardList(modifier: Modifier = Modifier) {
-    Column(
+fun BusinessCard(modifier: Modifier = Modifier) {
+    Box(
         modifier = Modifier
     ) {
         Text("CardList")
