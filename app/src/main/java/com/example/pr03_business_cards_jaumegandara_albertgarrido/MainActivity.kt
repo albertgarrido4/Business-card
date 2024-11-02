@@ -17,6 +17,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -89,9 +90,18 @@ fun BusinessCard(
                     .align(Alignment.Center)
                     .padding(16.dp)
             ) {
-                Text("Bart Simpson")
-                Text("Android Developer")
-                Text("Desenvolupador d'Android amb 5 anys d'experiència a els més grans multinacionals.")
+                Text(
+                    "Bart Simpson",
+                    color = Color.White
+                )
+                Text(
+                    "Android Developer",
+                    color = Color.White
+                )
+                Text(
+                    "Desenvolupador d'Android amb 5 anys d'experiència a els més grans multinacionals.",
+                    color = Color.White
+                )
             }
         }
     }
