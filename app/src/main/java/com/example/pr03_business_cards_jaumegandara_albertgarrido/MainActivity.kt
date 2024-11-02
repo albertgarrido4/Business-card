@@ -22,6 +22,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.pr03_business_cards_jaumegandara_albertgarrido.ui.theme.Pr03businesscardsjaumegandaraalbertgarridoTheme
 
 class MainActivity : ComponentActivity() {
@@ -78,29 +79,47 @@ fun BusinessCard(
 ) {
     Card(
         modifier = modifier
+            .fillMaxWidth()
+            .height(250.dp)
+
     ) {
         Box{
             Image(
                 painter = painterResource(id = getBackgroundImage(backgroundImage)),
                 contentDescription = null,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
             )
 
             Column(
                 modifier = Modifier
                     .align(Alignment.Center)
-                    .padding(16.dp)
+                    .padding(20.dp)
             ) {
                 Text(
                     "Bart Simpson",
-                    color = Color.White
+                    color = Color.White,
+                    fontSize = 20.sp,
                 )
                 Text(
                     "Android Developer",
-                    color = Color.White
-                )
+                    color = Color.White,
+                    fontSize = 20.sp,
+                    )
                 Text(
                     "Desenvolupador d'Android amb 5 anys d'experiència a els més grans multinacionals.",
-                    color = Color.White
+                    color = Color.White,
+                    fontSize = 20.sp,
+                    )
+                Text(
+                    "684876999",
+                    color = Color.White,
+                    fontSize = 20.sp,
+                )
+                Text(
+                    "Exemple@gmail.com",
+                    color = Color.White,
+                    fontSize = 20.sp,
                 )
             }
         }
