@@ -23,7 +23,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import com.example.pr03_business_cards_jaumegandara_albertgarrido.ui.theme.Pr03businesscardsjaumegandaraalbertgarridoTheme
-
 class FormViewModel : ViewModel() {
     var name by mutableStateOf("")
     var showName by mutableStateOf(false)
@@ -41,6 +40,20 @@ class FormViewModel : ViewModel() {
     var showEmail by mutableStateOf(false)
 
     var backgroundImage by mutableStateOf(R.drawable.image_1) // Imagen seleccionada por defecto
+
+    // Método para calcular el progreso basado en checkboxes seleccionados
+    fun calculateProgress(): Float {
+        val totalSteps = 5 // Nombre, Cargo, Descripción, Teléfono, Correo electrónico
+        val completedSteps = listOf(
+            showName && name.isNotEmpty(),
+            showPosition && position.isNotEmpty(),
+            showDescription && description.isNotEmpty(),
+            showPhone && phone.isNotEmpty(),
+            showEmail && email.isNotEmpty()
+        ).count { it }
+
+        return completedSteps / totalSteps.toFloat()
+    }
 }
 
 class BusinessCardViewModel : ViewModel() {
@@ -146,12 +159,23 @@ fun MainLayout(modifier: Modifier = Modifier) {
 @Composable
 fun Form(viewModel: FormViewModel) {
     Column(modifier = Modifier.padding(16.dp)) {
+        // Indicador de progreso
+        Text("Progreso de creación", style = MaterialTheme.typography.titleMedium)
+        LinearProgressIndicator(
+            progress = viewModel.calculateProgress(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp)
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
         // Nombre
         Row(verticalAlignment = Alignment.CenterVertically) {
             TextField(
                 value = viewModel.name,
                 onValueChange = { viewModel.name = it },
-                label = { Text("Nom") },
+                label = { Text("Nombre") },
                 modifier = Modifier.weight(1f)
             )
             Spacer(modifier = Modifier.width(8.dp))
@@ -168,7 +192,7 @@ fun Form(viewModel: FormViewModel) {
             TextField(
                 value = viewModel.position,
                 onValueChange = { viewModel.position = it },
-                label = { Text("Càrrec") },
+                label = { Text("Cargo") },
                 modifier = Modifier.weight(1f)
             )
             Spacer(modifier = Modifier.width(8.dp))
@@ -185,7 +209,7 @@ fun Form(viewModel: FormViewModel) {
             TextField(
                 value = viewModel.description,
                 onValueChange = { if (it.length <= 70) viewModel.description = it },
-                label = { Text("Descripció") },
+                label = { Text("Descripción") },
                 modifier = Modifier.weight(1f)
             )
             Spacer(modifier = Modifier.width(8.dp))
@@ -202,7 +226,7 @@ fun Form(viewModel: FormViewModel) {
             TextField(
                 value = viewModel.phone,
                 onValueChange = { if (it.all { char -> char.isDigit() }) viewModel.phone = it },
-                label = { Text("Telèfon") },
+                label = { Text("Teléfono") },
                 modifier = Modifier.weight(1f)
             )
             Spacer(modifier = Modifier.width(8.dp))
@@ -219,7 +243,7 @@ fun Form(viewModel: FormViewModel) {
             TextField(
                 value = viewModel.email,
                 onValueChange = { viewModel.email = it },
-                label = { Text("Correu electrónic") },
+                label = { Text("Correo electrónico") },
                 modifier = Modifier.weight(1f)
             )
             Spacer(modifier = Modifier.width(8.dp))
@@ -293,8 +317,7 @@ fun BusinessCard(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .height(cardHeight)
-    ) {
+            .height(cardHeight)    ) {
         Box {
             Image(
                 painter = painterResource(id = backgroundImage),
@@ -308,8 +331,6 @@ fun BusinessCard(
                     .align(Alignment.Center)
                     .padding(20.dp)
             ) {
-
-
                 if (showName) Text(name, color = Color.White, fontSize = 40.sp)
                 if (showPosition) Text(position, color = Color.White, fontSize = 30.sp)
                 if (showDescription) Text(description, color = Color.White, fontSize = 18.sp)
