@@ -5,28 +5,21 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material3.Button
 import androidx.compose.material3.*
-import androidx.compose.ui.unit.dp
-import androidx.compose.material3.Card
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import com.example.pr03_business_cards_jaumegandara_albertgarrido.ui.theme.Pr03businesscardsjaumegandaraalbertgarridoTheme
@@ -46,6 +39,8 @@ class FormViewModel : ViewModel() {
 
     var email by mutableStateOf("")
     var showEmail by mutableStateOf(false)
+
+    var backgroundImage by mutableStateOf(R.drawable.image_1) // Imagen seleccionada por defecto
 }
 
 class BusinessCardViewModel : ViewModel() {
@@ -63,6 +58,8 @@ class BusinessCardViewModel : ViewModel() {
 
     var email by mutableStateOf("")
     var showEmail by mutableStateOf(false)
+
+    var backgroundImage by mutableStateOf(R.drawable.image_1) // Imagen seleccionada
 }
 
 class MainActivity : ComponentActivity() {
@@ -83,7 +80,7 @@ class MainActivity : ComponentActivity() {
 fun MainLayout(modifier: Modifier = Modifier) {
     var showForm by remember { mutableStateOf(true) }
 
-    // Obtén les instàncies de ViewModel
+    // Obtén las instancias de ViewModel
     val formViewModel: FormViewModel = remember { FormViewModel() }
     val businessCardViewModel: BusinessCardViewModel = remember { BusinessCardViewModel() }
 
@@ -92,7 +89,7 @@ fun MainLayout(modifier: Modifier = Modifier) {
             Form(formViewModel)
             Button(
                 onClick = {
-                    // Aquí es transfereix la informació del formulari al model de targeta
+                    // Transferir datos del formulario al modelo de la tarjeta
                     businessCardViewModel.name = formViewModel.name
                     businessCardViewModel.showName = formViewModel.showName
                     businessCardViewModel.position = formViewModel.position
@@ -103,6 +100,7 @@ fun MainLayout(modifier: Modifier = Modifier) {
                     businessCardViewModel.showPhone = formViewModel.showPhone
                     businessCardViewModel.email = formViewModel.email
                     businessCardViewModel.showEmail = formViewModel.showEmail
+                    businessCardViewModel.backgroundImage = formViewModel.backgroundImage
 
                     showForm = false
                 },
@@ -115,7 +113,7 @@ fun MainLayout(modifier: Modifier = Modifier) {
         } else {
             BusinessCard(
                 modifier = modifier.padding(16.dp),
-                backgroundImage = 1,
+                backgroundImage = businessCardViewModel.backgroundImage,
                 name = businessCardViewModel.name,
                 showName = businessCardViewModel.showName,
                 position = businessCardViewModel.position,
@@ -137,7 +135,7 @@ fun MainLayout(modifier: Modifier = Modifier) {
             ) {
                 Icon(
                     imageVector = Icons.Filled.Edit,
-                    contentDescription = "Icona credits",
+                    contentDescription = "Editar tarjeta",
                     tint = Color.White
                 )
             }
@@ -148,7 +146,7 @@ fun MainLayout(modifier: Modifier = Modifier) {
 @Composable
 fun Form(viewModel: FormViewModel) {
     Column(modifier = Modifier.padding(16.dp)) {
-        // Name
+        // Nombre
         Row(verticalAlignment = Alignment.CenterVertically) {
             TextField(
                 value = viewModel.name,
@@ -165,7 +163,7 @@ fun Form(viewModel: FormViewModel) {
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Position
+        // Cargo
         Row(verticalAlignment = Alignment.CenterVertically) {
             TextField(
                 value = viewModel.position,
@@ -182,11 +180,11 @@ fun Form(viewModel: FormViewModel) {
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Description
+        // Descripción
         Row(verticalAlignment = Alignment.CenterVertically) {
             TextField(
                 value = viewModel.description,
-                onValueChange = { viewModel.description = it },
+                onValueChange = { if (it.length <= 70) viewModel.description = it },
                 label = { Text("Descripció") },
                 modifier = Modifier.weight(1f)
             )
@@ -199,11 +197,11 @@ fun Form(viewModel: FormViewModel) {
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Phone
+        // Teléfono
         Row(verticalAlignment = Alignment.CenterVertically) {
             TextField(
                 value = viewModel.phone,
-                onValueChange = { viewModel.phone = it },
+                onValueChange = { if (it.all { char -> char.isDigit() }) viewModel.phone = it },
                 label = { Text("Telèfon") },
                 modifier = Modifier.weight(1f)
             )
@@ -216,12 +214,12 @@ fun Form(viewModel: FormViewModel) {
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Email
+        // Correo electrónico
         Row(verticalAlignment = Alignment.CenterVertically) {
             TextField(
                 value = viewModel.email,
                 onValueChange = { viewModel.email = it },
-                label = { Text("Correu electrònic") },
+                label = { Text("Correu electrónic") },
                 modifier = Modifier.weight(1f)
             )
             Spacer(modifier = Modifier.width(8.dp))
@@ -229,6 +227,38 @@ fun Form(viewModel: FormViewModel) {
                 checked = viewModel.showEmail,
                 onCheckedChange = { viewModel.showEmail = it }
             )
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Selector de imágenes
+        Text("Selecciona la imagen de fondo", style = MaterialTheme.typography.titleMedium)
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            val images = listOf(
+                R.drawable.image_1,
+                R.drawable.image_2,
+                R.drawable.image_3,
+                R.drawable.image_4,
+                R.drawable.image_5
+            )
+
+            images.forEach { imageRes ->
+                Image(
+                    painter = painterResource(id = imageRes),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(64.dp)
+                        .clickable { viewModel.backgroundImage = imageRes }
+                        .border(
+                            width = if (viewModel.backgroundImage == imageRes) 2.dp else 0.dp,
+                            color = Color.Blue,
+                            shape = MaterialTheme.shapes.medium
+                        )
+                )
+            }
         }
     }
 }
@@ -248,14 +278,26 @@ fun BusinessCard(
     email: String,
     showEmail: Boolean
 ) {
+    val visibleFields = listOf(showName, showPosition, showDescription, showPhone, showEmail).count { it }
+    val cardHeightPercentage = when (visibleFields) {
+        5 -> 1.0f
+        4 -> 0.8f
+        3 -> 0.8f
+        2 -> 0.8f
+        1 -> 0.8f
+        else -> 0.8f
+    }
+
+    val cardHeight = (250.dp * cardHeightPercentage).coerceAtLeast(100.dp)
+
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .height(250.dp)
+            .height(cardHeight)
     ) {
         Box {
             Image(
-                painter = painterResource(id = getBackgroundImage(backgroundImage)),
+                painter = painterResource(id = backgroundImage),
                 contentDescription = null,
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop
@@ -266,29 +308,16 @@ fun BusinessCard(
                     .align(Alignment.Center)
                     .padding(20.dp)
             ) {
-                if (showName) {
-                    Text(name, color = Color.White, fontSize = 20.sp)
-                }
-                if (showPosition) {
-                    Text(position, color = Color.White, fontSize = 20.sp)
-                }
-                if (showDescription) {
-                    Text(description, color = Color.White, fontSize = 20.sp)
-                }
-                if (showPhone) {
-                    Text(phone, color = Color.White, fontSize = 20.sp)
-                }
-                if (showEmail) {
-                    Text(email, color = Color.White, fontSize = 20.sp)
-                }
+
+
+                if (showName) Text(name, color = Color.White, fontSize = 40.sp)
+                if (showPosition) Text(position, color = Color.White, fontSize = 30.sp)
+                if (showDescription) Text(description, color = Color.White, fontSize = 18.sp)
+                if (showPhone) Text(phone, color = Color.White, fontSize = 20.sp)
+                if (showEmail) Text(email, color = Color.White, fontSize = 20.sp)
             }
         }
     }
-}
-
-@Composable
-fun getBackgroundImage(index: Int): Int {
-    return R.drawable.image_1
 }
 
 @Preview(showBackground = true)
