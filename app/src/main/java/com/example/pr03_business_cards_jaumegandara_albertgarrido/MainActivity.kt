@@ -177,6 +177,7 @@ fun Form(viewModel: FormViewModel) {
 
     Column(
         modifier = Modifier.padding(16.dp)
+            .padding(bottom = 64.dp)
             .verticalScroll(scrollState)
     ) {
         // Progress bar
@@ -188,7 +189,7 @@ fun Form(viewModel: FormViewModel) {
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(
-                    "Progreso de creación",
+                    "Progrés de creació",
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
                 )
                 Spacer(modifier = Modifier.height(8.dp))
@@ -402,11 +403,14 @@ fun Form(viewModel: FormViewModel) {
             val colorOptions = listOf(
                 "Rojo" to Color.Red,
                 "Verde" to Color.Green,
-                "Azul" to Color.Blue
+                "Azul" to Color.Blue,
+                "Blanco" to Color.White,
+                "Negro" to Color.Black
             )
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Button(
@@ -417,12 +421,19 @@ fun Form(viewModel: FormViewModel) {
                     modifier = Modifier
                         .width(120.dp)
                         .height(40.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                    colors = ButtonDefaults.buttonColors(containerColor = colorOptions[colorState].second)
                 ) {
-                    Text(
-                        colorOptions[colorState].first,
-                        color = MaterialTheme.colorScheme.onPrimary
-                    )
+                    if (colorState == 3) {
+                        Text(
+                            colorOptions[colorState].first,
+                            color = Color.Black
+                        )
+                    } else {
+                        Text(
+                            colorOptions[colorState].first,
+                            color = Color.White
+                        )
+                    }
                 }
             }
 
