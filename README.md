@@ -73,9 +73,6 @@ Per executar aquest projecte:
 2. Compila i executa l'aplicació en un emulador d'Android o un dispositiu físic.
 3. Completa el formulari de creació per generar una targeta personalitzada.
 
-## Captures de pantalla (opcional)
-Inclou captures de pantalla de l'aplicació en acció per demostrar cada funcionalitat.
-
 ## Autors
 - Jaume Gàndara
 - Albert Garrido
