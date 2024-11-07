@@ -39,7 +39,11 @@ Un component `@Composable` que representa la pantalla principal de l'aplicació.
 Un component `@Composable` que proporciona el formulari de creació de targetes. Inclou diversos camps i controls per configurar la informació i l'aparença de la targeta.
 
 ### Pantalla de Creació de Targeta
-![Pantalla de Creació](path_to_image_1.)
+
+<div style="display: flex; justify-content: center;">
+  <img src="docs/images/Form1.png" alt="Pantalla de Creació" style="width: 45%;" />
+  <img src="docs/images/Form2.png" alt="Pantalla de Creació" style="width: 45%;" />
+</div>
 
 **Elements del formulari:**
 - **Progress Bar**: Mostra el progrés del formulari segons els camps omplerts, calculat amb `calculateProgress()`.
@@ -51,6 +55,8 @@ Un component `@Composable` que proporciona el formulari de creació de targetes.
 
 #### `BusinessCard`
 Un component `@Composable` que mostra la targeta de presentació creada. Mostra la informació del formulari amb els estils i opcions seleccionades.
+
+<img src="docs/images/BusinessCard.png" alt="Business Card" style="width: 45%;" />
 
 **Propietats principals:**
 - **Text**: Mostra els camps seleccionats de la targeta (nom, posició, descripció, telèfon, correu electrònic).
@@ -71,5 +77,5 @@ Per executar aquest projecte:
 Inclou captures de pantalla de l'aplicació en acció per demostrar cada funcionalitat.
 
 ## Autors
-- Jaume Gandara
+- Jaume Gàndara
 - Albert Garrido
