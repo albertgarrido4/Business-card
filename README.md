@@ -38,6 +38,9 @@ Un component `@Composable` que representa la pantalla principal de l'aplicació.
 #### `Form`
 Un component `@Composable` que proporciona el formulari de creació de targetes. Inclou diversos camps i controls per configurar la informació i l'aparença de la targeta.
 
+### Pantalla de Creació de Targeta
+![Pantalla de Creació](path_to_image_1.)
+
 **Elements del formulari:**
 - **Progress Bar**: Mostra el progrés del formulari segons els camps omplerts, calculat amb `calculateProgress()`.
 - **Camps de Text**: Camps per a introduir el nom, posició, descripció, telèfon, i correu electrònic.
