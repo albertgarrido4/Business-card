@@ -1,99 +1,72 @@
 ﻿# pr03-business-cards-jaumegandara-albertgarrido
-# PR03 Business Cards App
 
-Aquest projecte és una aplicació desenvolupada en Kotlin utilitzant Jetpack Compose. Permet als usuaris crear targetes de presentació personalitzables amb informació personal i professional. L'aplicació compta amb un disseny modern i funcional, ideal per aprendre i practicar conceptes de disseny declaratiu i gestió d'estat.
+Aquest projecte és una aplicació d'Android desenvolupada en Kotlin amb Compose. Permet als usuaris crear una targeta de presentació personalitzada amb diversos camps de dades, icones, colors, i una imatge de fons.
 
-## Funcionalitats
+## Funcionalitats principals
 
-### *1. Crear una targeta de presentació*
-- Completa un formulari amb informació com:
-  - *Nom*: Indica el nom de l'usuari.
-  - *Càrrec*: Descriu el lloc o professió de l'usuari.
-  - *Descripció*: Una breu descripció personal o professional (màxim 70 caràcters).
-  - *Telèfon*: Introdueix un número de contacte (només es permeten números).
-  - *Correu Electrònic*: Proporciona un correu electrònic de contacte.
-- Selecciona quina informació es mostrarà a la targeta mitjançant caselles de verificació.
+### Paquets utilitzats
+- `androidx.compose` per crear la interfície d'usuari amb una estructura moderna i declarativa.
+- `androidx.lifecycle` per implementar `ViewModel` que permet gestionar l'estat de manera reactiva.
+- `androidx.activity` per gestionar l'activitat i la configuració d'interfície.
 
-### *2. Personalització avançada*
-- *Imatge de fons*: Escull entre cinc imatges predefinides per personalitzar el fons de la targeta.
-- *Icona decorativa*:
-  - Tria entre cinc icones diferents, com Home, Star, Favorite, Info i LocationOn.
-  - Decideix si la icona s'ha de mostrar a la targeta.
-- *Colors personalitzables*:
-  - Activa l'opció per personalitzar el color del text.
-  - Canvia entre colors predefinits (Vermell, Verd, Blau, Blanc, Negre) amb un botó dinàmic.
+### Classes i Components
 
-### *3. Visualitzar la targeta*
-- Un cop completat el formulari, pots previsualitzar la teva targeta de presentació:
-  - Mostra només els camps seleccionats.
-  - Aplica les configuracions personalitzades d'icona, fons i colors.
-  - Dissenyada per adaptar-se a diferents quantitats d'informació.
+#### `FormViewModel`
+Aquesta classe gestiona l'estat de cada camp del formulari per crear la targeta de presentació. Inclou camps per al nom, posició, descripció, telèfon, correu electrònic, icona i color seleccionat, així com un mètode per calcular el progrés del formulari.
 
-### *4. Editar la targeta*
-- Utilitza un botó flotant per tornar al formulari i editar la informació prèviament introduïda.
+**Funcions i propietats:**
+- **Propietats de camp**: Nom, posició, descripció, telèfon, correu electrònic, entre d'altres, amb un valor boolean per mostrar/ocultar cada camp.
+- **Imatge de fons**: `backgroundImage` per seleccionar una imatge.
+- **Icona**: `selectedIcon` per definir una icona, i `showIcon` per mostrar-la o no.
+- **Color**: `enableColor` i `selectedColor` per definir el color del text a la targeta.
+- **calculateProgress**: Funció que calcula el progrés del formulari segons els camps omplerts.
 
-### *5. Progrés del formulari*
-- Un indicador de progrés dinàmic mostra el percentatge de camps completats al formulari.
+#### `BusinessCardViewModel`
+Aquesta classe emmagatzema l'estat de la targeta creada amb les dades obtingudes del formulari. Utilitza les mateixes propietats que el `FormViewModel` però sense el mètode de càlcul de progrés.
 
-## Estructura del Projecte
+#### `MainActivity`
+La classe principal que inicialitza l'aplicació i defineix la seva temàtica. Utilitza `setContent` per mostrar el component `MainLayout`, que gestiona la pantalla principal de l'aplicació.
 
-### *ViewModels*
-- FormViewModel: Gestiona l'estat del formulari.
-- BusinessCardViewModel: Gestiona l'estat de la targeta generada.
+#### `MainLayout`
+Un component `@Composable` que representa la pantalla principal de l'aplicació. Utilitza un `Box` per organitzar el formulari i la visualització de la targeta en una sola pantalla, alternant entre el formulari de creació i la targeta completada.
 
-### *Components principals*
-- MainLayout: Controla la navegació entre el formulari i la vista de la targeta.
-- Form: Permet a l'usuari introduir i personalitzar la informació.
-- BusinessCard: Mostra la targeta de presentació generada amb les opcions configurades.
+**Funcionalitats:**
+- **Formulari de creació**: Mostra el component `Form` per introduir les dades de la targeta.
+- **Botó "Crear"**: Botó que transfereix les dades del `FormViewModel` a `BusinessCardViewModel` i canvia la vista per mostrar la targeta completada.
+- **Botó d'edició**: Un botó flotant (FAB) que permet tornar al formulari per editar la targeta.
 
-### *Temes i Estil*
-- Utilitza *Material Design 3* per a colors, tipografia i components moderns.
-- L'aplicació suporta un tema adaptable (Pr03businesscardsjaumegandaraalbertgarridoTheme).
+#### `Form`
+Un component `@Composable` que proporciona el formulari de creació de targetes. Inclou diversos camps i controls per configurar la informació i l'aparença de la targeta.
 
-## Requisits
+**Elements del formulari:**
+- **Progress Bar**: Mostra el progrés del formulari segons els camps omplerts, calculat amb `calculateProgress()`.
+- **Camps de Text**: Camps per a introduir el nom, posició, descripció, telèfon, i correu electrònic.
+- **Opcions de visualització**: Checkboxs per mostrar o ocultar cada camp en la targeta.
+- **Selecció d'imatge de fons**: Mostra una fila d'imatges miniatura per seleccionar la imatge de fons.
+- **Selecció d'icona**: Opció per seleccionar una icona per la targeta, amb un `Checkbox` per mostrar-la o no.
+- **Selecció de color**: Permet als usuaris habilitar i seleccionar un color per al text de la targeta.
 
-### *Tecnologies utilitzades*
-- *Kotlin*: Llenguatge principal.
-- *Jetpack Compose*: Framework per a UI declarativa.
-- *Material 3*: Implementació de Material Design.
+#### `BusinessCard`
+Un component `@Composable` que mostra la targeta de presentació creada. Mostra la informació del formulari amb els estils i opcions seleccionades.
 
-### *Compatibilitat*
-- Versió mínima d'Android: *API 21 (Lollipop)*.
+**Propietats principals:**
+- **Text**: Mostra els camps seleccionats de la targeta (nom, posició, descripció, telèfon, correu electrònic).
+- **Icona**: Mostra la icona seleccionada si està habilitada.
+- **Colors personalitzats**: Aplica el color seleccionat al text si `enableColor` està activat.
+- **Alçada dinàmica**: Ajusta l'alçada de la targeta segons el nombre de camps visibles.
 
-## Com executar el projecte
+#### `GreetingPreview`
+Una funció `@Preview` que permet previsualitzar el component `MainLayout` durant el desenvolupament.
 
-1. Clona aquest repositori al teu ordinador local:
-   bash
-   git clone https://github.com/el_teu_usuari/pr03-business-cards.git
-   
-2. Obre'l amb *Android Studio*.
-3. Assegura't que tens configurat un emulador o dispositiu físic per a proves.
-4. Fes clic a *Run* per compilar i executar l'aplicació.
+## Executar l'aplicació
+Per executar aquest projecte:
+1. Obre el projecte a Android Studio.
+2. Compila i executa l'aplicació en un emulador d'Android o un dispositiu físic.
+3. Completa el formulari de creació per generar una targeta personalitzada.
 
-## Millores futures
-
-- Possibilitat de desar múltiples targetes en una galeria.
-- Compartir targetes a través de xarxes socials o correu electrònic.
-- Afegir un selector d'imatges personalitzat des de la galeria del dispositiu.
-- Suport per a traduccions en múltiples idiomes.
-
-## Captures de pantalla
-
-1. *Formulari de creació*  
-   (Inclou camps de text, opcions d'imatge i icones, i un progrés dinàmic)  
-
-   ![Formulari](docs/images/form_screen.png)
-
-2. *Vista de targeta de presentació*  
-   (Visualització de la targeta generada amb tots els estils aplicats)  
-
-   ![Targeta](docs/images/card_screen.png)
-
----
+## Captures de pantalla (opcional)
+Inclou captures de pantalla de l'aplicació en acció per demostrar cada funcionalitat.
 
 ## Autors
-
-- *Jaume Gándara*  
-- *Albert Garrido*  
-
-Gràcies per utilitzar aquesta aplicació! Per a preguntes o comentaris, no dubtis a obrir un [issue](https://github.com/el_teu_usuari/pr03-business-cards/issues). 🚀
+- Jaume Gandara
+- Albert Garrido
