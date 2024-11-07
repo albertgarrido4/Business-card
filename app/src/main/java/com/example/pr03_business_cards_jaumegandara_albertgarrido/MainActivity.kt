@@ -8,50 +8,60 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import com.example.pr03_business_cards_jaumegandara_albertgarrido.ui.theme.Pr03businesscardsjaumegandaraalbertgarridoTheme
+
 class FormViewModel : ViewModel() {
     var name by mutableStateOf("")
     var showName by mutableStateOf(false)
-
     var position by mutableStateOf("")
     var showPosition by mutableStateOf(false)
-
     var description by mutableStateOf("")
     var showDescription by mutableStateOf(false)
-
     var phone by mutableStateOf("")
     var showPhone by mutableStateOf(false)
-
     var email by mutableStateOf("")
     var showEmail by mutableStateOf(false)
+    var backgroundImage by mutableIntStateOf(R.drawable.image_1)
+    var selectedIcon by mutableStateOf(Icons.Default.Home)
+    var showIcon by mutableStateOf(false)
+    var enableColor by mutableStateOf(false)
+    var selectedColor by mutableStateOf(Color.White)
 
-    var backgroundImage by mutableStateOf(R.drawable.image_1) // Imagen seleccionada por defecto
-
-    // Método para calcular el progreso basado en checkboxes seleccionados
     fun calculateProgress(): Float {
-        val totalSteps = 5 // Nombre, Cargo, Descripción, Teléfono, Correo electrónico
+        val totalSteps = 6
         val completedSteps = listOf(
             showName && name.isNotEmpty(),
             showPosition && position.isNotEmpty(),
             showDescription && description.isNotEmpty(),
             showPhone && phone.isNotEmpty(),
-            showEmail && email.isNotEmpty()
+            showEmail && email.isNotEmpty(),
+            showIcon
         ).count { it }
-
         return completedSteps / totalSteps.toFloat()
     }
 }
@@ -59,20 +69,19 @@ class FormViewModel : ViewModel() {
 class BusinessCardViewModel : ViewModel() {
     var name by mutableStateOf("")
     var showName by mutableStateOf(false)
-
     var position by mutableStateOf("")
     var showPosition by mutableStateOf(false)
-
     var description by mutableStateOf("")
     var showDescription by mutableStateOf(false)
-
     var phone by mutableStateOf("")
     var showPhone by mutableStateOf(false)
-
     var email by mutableStateOf("")
     var showEmail by mutableStateOf(false)
-
-    var backgroundImage by mutableStateOf(R.drawable.image_1) // Imagen seleccionada
+    var backgroundImage by mutableIntStateOf(R.drawable.image_1)
+    var selectedIcon by mutableStateOf(Icons.Default.Home)
+    var showIcon by mutableStateOf(false)
+    var enableColor by mutableStateOf(false)
+    var selectedColor by mutableStateOf(Color.White)
 }
 
 class MainActivity : ComponentActivity() {
@@ -92,8 +101,6 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainLayout(modifier: Modifier = Modifier) {
     var showForm by remember { mutableStateOf(true) }
-
-    // Obtén las instancias de ViewModel
     val formViewModel: FormViewModel = remember { FormViewModel() }
     val businessCardViewModel: BusinessCardViewModel = remember { BusinessCardViewModel() }
 
@@ -102,7 +109,6 @@ fun MainLayout(modifier: Modifier = Modifier) {
             Form(formViewModel)
             Button(
                 onClick = {
-                    // Transferir datos del formulario al modelo de la tarjeta
                     businessCardViewModel.name = formViewModel.name
                     businessCardViewModel.showName = formViewModel.showName
                     businessCardViewModel.position = formViewModel.position
@@ -114,14 +120,21 @@ fun MainLayout(modifier: Modifier = Modifier) {
                     businessCardViewModel.email = formViewModel.email
                     businessCardViewModel.showEmail = formViewModel.showEmail
                     businessCardViewModel.backgroundImage = formViewModel.backgroundImage
-
+                    businessCardViewModel.selectedIcon = formViewModel.selectedIcon
+                    businessCardViewModel.showIcon = formViewModel.showIcon
+                    businessCardViewModel.enableColor = formViewModel.enableColor
+                    businessCardViewModel.selectedColor = formViewModel.selectedColor
                     showForm = false
                 },
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .padding(16.dp)
+                    .padding(16.dp),
+                shape = RoundedCornerShape(8.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary
+                )
             ) {
-                Text("Crear", fontSize = 20.sp)
+                Text("Crear", fontSize = 20.sp, modifier = Modifier.padding(horizontal = 32.dp, vertical = 4.dp))
             }
         } else {
             BusinessCard(
@@ -136,20 +149,22 @@ fun MainLayout(modifier: Modifier = Modifier) {
                 phone = businessCardViewModel.phone,
                 showPhone = businessCardViewModel.showPhone,
                 email = businessCardViewModel.email,
-                showEmail = businessCardViewModel.showEmail
+                showEmail = businessCardViewModel.showEmail,
+                selectedIcon = businessCardViewModel.selectedIcon,
+                showIcon = businessCardViewModel.showIcon,
+                enableColor = businessCardViewModel.enableColor,
+                selectedColor = businessCardViewModel.selectedColor
             )
-            Button(
+            FloatingActionButton(
                 onClick = { showForm = true },
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
-                    .padding(16.dp)
-                    .size(72.dp),
+                    .padding(16.dp),
                 shape = CircleShape,
             ) {
                 Icon(
                     imageVector = Icons.Filled.Edit,
                     contentDescription = "Editar tarjeta",
-                    tint = Color.White
                 )
             }
         }
@@ -158,131 +173,259 @@ fun MainLayout(modifier: Modifier = Modifier) {
 
 @Composable
 fun Form(viewModel: FormViewModel) {
-    Column(modifier = Modifier.padding(16.dp)) {
-        // Indicador de progreso
-        Text("Progreso de creación", style = MaterialTheme.typography.titleMedium)
-        LinearProgressIndicator(
-            progress = viewModel.calculateProgress(),
+    val scrollState = rememberScrollState()
+
+    Column(
+        modifier = Modifier.padding(16.dp)
+            .verticalScroll(scrollState)
+    ) {
+        // Progress bar
+        Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 8.dp)
+                .padding(bottom = 16.dp),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(
+                    "Progreso de creación",
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+
+                val progress = viewModel.calculateProgress()
+                LinearProgressIndicator(
+                    progress = { progress },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(8.dp)
+                        .clip(RoundedCornerShape(4.dp)),
+                    color = MaterialTheme.colorScheme.primary,
+                    trackColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
+                )
+                Text(
+                    "${(progress * 100).toInt()}% completado",
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.align(Alignment.End)
+                )
+            }
+        }
+
+        // Form Fields
+        OutlinedTextField(
+            value = viewModel.name,
+            onValueChange = { viewModel.name = it },
+            label = { Text("Nombre") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 4.dp)
         )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Nombre
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            TextField(
-                value = viewModel.name,
-                onValueChange = { viewModel.name = it },
-                label = { Text("Nombre") },
-                modifier = Modifier.weight(1f)
-            )
-            Spacer(modifier = Modifier.width(8.dp))
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(bottom = 8.dp)
+        ) {
             Checkbox(
                 checked = viewModel.showName,
                 onCheckedChange = { viewModel.showName = it }
             )
+            Text("Mostrar nombre", style = MaterialTheme.typography.bodyMedium)
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
-
-        // Cargo
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            TextField(
-                value = viewModel.position,
-                onValueChange = { viewModel.position = it },
-                label = { Text("Cargo") },
-                modifier = Modifier.weight(1f)
-            )
-            Spacer(modifier = Modifier.width(8.dp))
+        OutlinedTextField(
+            value = viewModel.position,
+            onValueChange = { viewModel.position = it },
+            label = { Text("Cargo") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 4.dp)
+        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(bottom = 8.dp)
+        ) {
             Checkbox(
                 checked = viewModel.showPosition,
                 onCheckedChange = { viewModel.showPosition = it }
             )
+            Text("Mostrar cargo", style = MaterialTheme.typography.bodyMedium)
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
-
-        // Descripción
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            TextField(
-                value = viewModel.description,
-                onValueChange = { if (it.length <= 70) viewModel.description = it },
-                label = { Text("Descripción") },
-                modifier = Modifier.weight(1f)
-            )
-            Spacer(modifier = Modifier.width(8.dp))
+        OutlinedTextField(
+            value = viewModel.description,
+            onValueChange = { if (it.length <= 70) viewModel.description = it },
+            label = { Text("Descripción") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 4.dp)
+        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(bottom = 8.dp)
+        ) {
             Checkbox(
                 checked = viewModel.showDescription,
                 onCheckedChange = { viewModel.showDescription = it }
             )
+            Text("Mostrar descripción", style = MaterialTheme.typography.bodyMedium)
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
-
-        // Teléfono
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            TextField(
-                value = viewModel.phone,
-                onValueChange = { if (it.all { char -> char.isDigit() }) viewModel.phone = it },
-                label = { Text("Teléfono") },
-                modifier = Modifier.weight(1f)
-            )
-            Spacer(modifier = Modifier.width(8.dp))
+        OutlinedTextField(
+            value = viewModel.phone,
+            onValueChange = { if (it.all { char -> char.isDigit() }) viewModel.phone = it },
+            label = { Text("Teléfono") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 4.dp)
+        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(bottom = 8.dp)
+        ) {
             Checkbox(
                 checked = viewModel.showPhone,
                 onCheckedChange = { viewModel.showPhone = it }
             )
+            Text("Mostrar teléfono", style = MaterialTheme.typography.bodyMedium)
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
-
-        // Correo electrónico
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            TextField(
-                value = viewModel.email,
-                onValueChange = { viewModel.email = it },
-                label = { Text("Correo electrónico") },
-                modifier = Modifier.weight(1f)
-            )
-            Spacer(modifier = Modifier.width(8.dp))
+        OutlinedTextField(
+            value = viewModel.email,
+            onValueChange = { viewModel.email = it },
+            label = { Text("Correo electrónico") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 4.dp)
+        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(bottom = 16.dp)
+        ) {
             Checkbox(
                 checked = viewModel.showEmail,
                 onCheckedChange = { viewModel.showEmail = it }
             )
+            Text("Mostrar correo", style = MaterialTheme.typography.bodyMedium)
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Selector de imágenes
+        // Image Selection
         Text("Selecciona la imagen de fondo", style = MaterialTheme.typography.titleMedium)
+        Spacer(modifier = Modifier.height(8.dp))
         Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            val images = listOf(
+            listOf(
                 R.drawable.image_1,
                 R.drawable.image_2,
                 R.drawable.image_3,
                 R.drawable.image_4,
                 R.drawable.image_5
-            )
-
-            images.forEach { imageRes ->
+            ).forEach { imageRes ->
                 Image(
                     painter = painterResource(id = imageRes),
                     contentDescription = null,
                     modifier = Modifier
                         .size(64.dp)
-                        .clickable { viewModel.backgroundImage = imageRes }
+                        .clip(RoundedCornerShape(8.dp))
                         .border(
-                            width = if (viewModel.backgroundImage == imageRes) 2.dp else 0.dp,
-                            color = Color.Blue,
-                            shape = MaterialTheme.shapes.medium
+                            width = if (viewModel.backgroundImage == imageRes) 2.dp else 1.dp,
+                            color = if (viewModel.backgroundImage == imageRes)
+                                MaterialTheme.colorScheme.primary
+                            else Color.Gray,
+                            shape = RoundedCornerShape(8.dp)
                         )
+                        .clickable { viewModel.backgroundImage = imageRes },
+                    contentScale = ContentScale.Crop
                 )
             }
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Icon Selection
+        Text("Selecciona un ícono", style = MaterialTheme.typography.titleMedium)
+        Spacer(modifier = Modifier.height(8.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            listOf(
+                Icons.Default.Home,
+                Icons.Default.Star,
+                Icons.Default.Favorite,
+                Icons.Default.Info,
+                Icons.Default.LocationOn
+            ).forEach { icon ->
+                IconButton(
+                    onClick = { viewModel.selectedIcon = icon },
+                    modifier = Modifier
+                        .size(48.dp)
+                        .border(
+                            width = if (viewModel.selectedIcon == icon) 2.dp else 1.dp,
+                            color = if (viewModel.selectedIcon == icon)
+                                MaterialTheme.colorScheme.primary
+                            else Color.Gray,
+                            shape = CircleShape
+                        )
+                ) {
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        tint = if (viewModel.selectedIcon == icon)
+                            MaterialTheme.colorScheme.primary
+                        else Color.Gray
+                    )
+                }
+            }
+            Checkbox(
+                checked = viewModel.showIcon,
+                onCheckedChange = { viewModel.showIcon = it }
+            )
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Color Selection
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Switch(
+                checked = viewModel.enableColor,
+                onCheckedChange = { viewModel.enableColor = it }
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text("Habilitar color en los textos")
+        }
+
+        // Botón triState para cambiar entre tres colores
+        if (viewModel.enableColor) {
+            Spacer(modifier = Modifier.height(16.dp))
+            var colorState by remember { mutableIntStateOf(0) }
+
+            val colorOptions = listOf(
+                "Rojo" to Color.Red,
+                "Verde" to Color.Green,
+                "Azul" to Color.Blue
+            )
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Button(
+                    onClick = {
+                        colorState = (colorState + 1) % colorOptions.size
+                        viewModel.selectedColor = colorOptions[colorState].second
+                    },
+                    modifier = Modifier
+                        .width(120.dp)
+                        .height(40.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                ) {
+                    Text(
+                        colorOptions[colorState].first,
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
+            }
+
         }
     }
 }
@@ -300,8 +443,13 @@ fun BusinessCard(
     phone: String,
     showPhone: Boolean,
     email: String,
-    showEmail: Boolean
+    showEmail: Boolean,
+    selectedIcon: ImageVector,
+    showIcon: Boolean,
+    enableColor: Boolean,
+    selectedColor: Color
 ) {
+    val textColor = if (enableColor) selectedColor else Color.White
     val visibleFields = listOf(showName, showPosition, showDescription, showPhone, showEmail).count { it }
     val cardHeightPercentage = when (visibleFields) {
         5 -> 1.0f
@@ -311,13 +459,15 @@ fun BusinessCard(
         1 -> 0.8f
         else -> 0.8f
     }
-
     val cardHeight = (250.dp * cardHeightPercentage).coerceAtLeast(100.dp)
-
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .height(cardHeight)    ) {
+            .height(cardHeight)
+            .padding(16.dp),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+    ) {
         Box {
             Image(
                 painter = painterResource(id = backgroundImage),
@@ -326,16 +476,28 @@ fun BusinessCard(
                 contentScale = ContentScale.Crop
             )
 
+            if (showIcon) {
+                Icon(
+                    imageVector = selectedIcon,
+                    contentDescription = "Ícono personalizado",
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(16.dp)
+                        .size(48.dp),
+                    tint = textColor
+                )
+            }
+
             Column(
                 modifier = Modifier
                     .align(Alignment.Center)
                     .padding(20.dp)
             ) {
-                if (showName) Text(name, color = Color.White, fontSize = 40.sp)
-                if (showPosition) Text(position, color = Color.White, fontSize = 30.sp)
-                if (showDescription) Text(description, color = Color.White, fontSize = 18.sp)
-                if (showPhone) Text(phone, color = Color.White, fontSize = 20.sp)
-                if (showEmail) Text(email, color = Color.White, fontSize = 20.sp)
+                if (showName) Text(name, color = textColor, fontSize = 40.sp, fontWeight = FontWeight.Bold)
+                if (showPosition) Text(position, color = textColor, fontSize = 30.sp)
+                if (showDescription) Text(description, color = textColor, fontSize = 16.sp)
+                if (showPhone) Text(phone, color = textColor, fontSize = 20.sp)
+                if (showEmail) Text(email, color = textColor, fontSize = 20.sp)
             }
         }
     }
