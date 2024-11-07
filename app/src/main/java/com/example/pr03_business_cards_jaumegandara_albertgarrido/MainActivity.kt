@@ -164,7 +164,7 @@ fun MainLayout(modifier: Modifier = Modifier) {
             ) {
                 Icon(
                     imageVector = Icons.Filled.Edit,
-                    contentDescription = "Editar tarjeta",
+                    contentDescription = "Editar targeta",
                 )
             }
         }
@@ -205,7 +205,7 @@ fun Form(viewModel: FormViewModel) {
                     trackColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
                 )
                 Text(
-                    "${(progress * 100).toInt()}% completado",
+                    "${(progress * 100).toInt()}% completat",
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.align(Alignment.End)
                 )
@@ -216,7 +216,7 @@ fun Form(viewModel: FormViewModel) {
         OutlinedTextField(
             value = viewModel.name,
             onValueChange = { viewModel.name = it },
-            label = { Text("Nombre") },
+            label = { Text("Nom") },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 4.dp)
@@ -229,13 +229,13 @@ fun Form(viewModel: FormViewModel) {
                 checked = viewModel.showName,
                 onCheckedChange = { viewModel.showName = it }
             )
-            Text("Mostrar nombre", style = MaterialTheme.typography.bodyMedium)
+            Text("Mostrar nom", style = MaterialTheme.typography.bodyMedium)
         }
 
         OutlinedTextField(
             value = viewModel.position,
             onValueChange = { viewModel.position = it },
-            label = { Text("Cargo") },
+            label = { Text("Càrrec") },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 4.dp)
@@ -248,13 +248,13 @@ fun Form(viewModel: FormViewModel) {
                 checked = viewModel.showPosition,
                 onCheckedChange = { viewModel.showPosition = it }
             )
-            Text("Mostrar cargo", style = MaterialTheme.typography.bodyMedium)
+            Text("Mostrar càrrec", style = MaterialTheme.typography.bodyMedium)
         }
 
         OutlinedTextField(
             value = viewModel.description,
             onValueChange = { if (it.length <= 70) viewModel.description = it },
-            label = { Text("Descripción") },
+            label = { Text("Descripció") },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 4.dp)
@@ -267,13 +267,13 @@ fun Form(viewModel: FormViewModel) {
                 checked = viewModel.showDescription,
                 onCheckedChange = { viewModel.showDescription = it }
             )
-            Text("Mostrar descripción", style = MaterialTheme.typography.bodyMedium)
+            Text("Mostrar descripció", style = MaterialTheme.typography.bodyMedium)
         }
 
         OutlinedTextField(
             value = viewModel.phone,
             onValueChange = { if (it.all { char -> char.isDigit() }) viewModel.phone = it },
-            label = { Text("Teléfono") },
+            label = { Text("Telèfon") },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 4.dp)
@@ -286,13 +286,13 @@ fun Form(viewModel: FormViewModel) {
                 checked = viewModel.showPhone,
                 onCheckedChange = { viewModel.showPhone = it }
             )
-            Text("Mostrar teléfono", style = MaterialTheme.typography.bodyMedium)
+            Text("Mostrar telèfon", style = MaterialTheme.typography.bodyMedium)
         }
 
         OutlinedTextField(
             value = viewModel.email,
             onValueChange = { viewModel.email = it },
-            label = { Text("Correo electrónico") },
+            label = { Text("Correu electrònic") },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 4.dp)
@@ -305,11 +305,11 @@ fun Form(viewModel: FormViewModel) {
                 checked = viewModel.showEmail,
                 onCheckedChange = { viewModel.showEmail = it }
             )
-            Text("Mostrar correo", style = MaterialTheme.typography.bodyMedium)
+            Text("Mostrar correu", style = MaterialTheme.typography.bodyMedium)
         }
 
         // Image Selection
-        Text("Selecciona la imagen de fondo", style = MaterialTheme.typography.titleMedium)
+        Text("Selecciona la imatge de fons", style = MaterialTheme.typography.titleMedium)
         Spacer(modifier = Modifier.height(8.dp))
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -343,7 +343,7 @@ fun Form(viewModel: FormViewModel) {
         Spacer(modifier = Modifier.height(16.dp))
 
         // Icon Selection
-        Text("Selecciona un ícono", style = MaterialTheme.typography.titleMedium)
+        Text("Selecciona una icona", style = MaterialTheme.typography.titleMedium)
         Spacer(modifier = Modifier.height(8.dp))
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -392,20 +392,19 @@ fun Form(viewModel: FormViewModel) {
                 onCheckedChange = { viewModel.enableColor = it }
             )
             Spacer(modifier = Modifier.width(8.dp))
-            Text("Habilitar color en los textos")
+            Text("Habilitar color en els texts")
         }
 
-        // Botón triState para cambiar entre tres colores
         if (viewModel.enableColor) {
             Spacer(modifier = Modifier.height(16.dp))
             var colorState by remember { mutableIntStateOf(0) }
 
             val colorOptions = listOf(
-                "Rojo" to Color.Red,
-                "Verde" to Color.Green,
-                "Azul" to Color.Blue,
-                "Blanco" to Color.White,
-                "Negro" to Color.Black
+                "Vermell" to Color.Red,
+                "Verd" to Color.Green,
+                "Blau" to Color.Blue,
+                "Blanc" to Color.White,
+                "Negre" to Color.Black
             )
 
             Row(
@@ -490,7 +489,7 @@ fun BusinessCard(
             if (showIcon) {
                 Icon(
                     imageVector = selectedIcon,
-                    contentDescription = "Ícono personalizado",
+                    contentDescription = "Icona personalitzada",
                     modifier = Modifier
                         .align(Alignment.TopEnd)
                         .padding(16.dp)
